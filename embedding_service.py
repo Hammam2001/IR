@@ -1,36 +1,34 @@
 from sentence_transformers import SentenceTransformer, util
 
-# تحميل نموذج خفيف وسريع مناسب لعمليات البحث
-print("Loading BERT model...")
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = None
+
+
+def get_model():
+    global model
+    if model is None:
+        print("Loading BERT model...")
+        model = SentenceTransformer('all-MiniLM-L6-v2')
+    return model
+
 
 def build_embedding_index(documents):
-   
     print("Converting documents to embeddings... (This may take some time for large datasets)")
-    # تحويل النصوص إلى متجهات (Tensors)
-    document_embeddings = model.encode(documents, convert_to_tensor=True)
+    document_embeddings = get_model().encode(documents, convert_to_tensor=True)
     return document_embeddings
+
 
 def search_embeddings(query, document_embeddings, documents, top_k=100):
     """
     performs search for the query using cosine similarity
     """
-    # تحويل الاستعلام إلى متجه بنفس الطريقة
-    query_embedding = model.encode(query, convert_to_tensor=True)
-    
-    # حساب التشابه الجيبي (Cosine Similarity) بين متجه الاستعلام ومتجهات كل المستندات
-    # يعيد هذا التابع مصفوفة من الأوزان (Scores)
+    query_embedding = get_model().encode(query, convert_to_tensor=True)
     cosine_scores = util.cos_sim(query_embedding, document_embeddings)[0]
-    
+
     results = []
     for doc_id, score in enumerate(cosine_scores):
-        # تحويل القيمة من Tensor إلى رقم عادي
         results.append((doc_id, score.item(), documents[doc_id]))
-        
-    # ترتيب النتائج من الأعلى تشابهاً للأقل
+
     results = sorted(results, key=lambda x: x[1], reverse=True)
-    
-    # إعادة أفضل K نتائج فقط
     return results[:top_k]
 
 if __name__ == "__main__":

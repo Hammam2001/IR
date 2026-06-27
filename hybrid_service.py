@@ -1,5 +1,5 @@
 from bm25_service import build_bm25_model, search_bm25
-from embedding_service import build_embedding_index, search_embeddings, model
+from embedding_service import build_embedding_index, search_embeddings, get_model
 from sentence_transformers import util
 
 def min_max_normalize(scores):
@@ -22,7 +22,7 @@ def parallel_hybrid_search(query, bm25_model, document_embeddings, documents, al
         bm25_scores[doc_id] = score
         
     # 2. جلب أوزان BERT لكل المستندات
-    query_emb = model.encode(query, convert_to_tensor=True)
+    query_emb = get_model().encode(query, convert_to_tensor=True)
     bert_scores_tensor = util.cos_sim(query_emb, document_embeddings)[0]
     bert_scores = [s.item() for s in bert_scores_tensor]
     
@@ -50,7 +50,7 @@ def serial_hybrid_search(query, bm25_model, document_embeddings, documents, init
     
     candidate_doc_ids = [doc_id for doc_id, _, _ in top_bm25_docs]
     
-    query_emb = model.encode(query, convert_to_tensor=True)
+    query_emb = get_model().encode(query, convert_to_tensor=True)
     
     serial_results = []
     for doc_id in candidate_doc_ids:
