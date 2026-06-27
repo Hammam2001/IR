@@ -1,11 +1,10 @@
 import streamlit as st
 import requests
 import time
-import pandas as pd # أضفنا هذه المكتبة لرسم جداول التقييم
+import pandas as pd 
 
 st.set_page_config(page_title="Smart Search Engine", page_icon="🔍", layout="wide")
 
-# --- إدارة حالة الواجهة (Session State) ---
 if 'limit' not in st.session_state:
     st.session_state.limit = 10
 if 'execute_search' not in st.session_state:
@@ -43,6 +42,7 @@ with st.sidebar:
     use_refinement = st.toggle("✨ Enable AI (Correction + Synonyms)", value=False)
 
 st.title("🔍 Smart Search Engine (IR 2026)")
+st.caption("A lightweight IR experience with search, refinement, and evaluation.")
 
 tab_search, tab_analytics = st.tabs(["🚀 Search Interface", "📊 Academic Evaluation Dashboard"])
 
