@@ -1,11 +1,12 @@
 import math
 import ir_datasets
 import requests
-import pandas as pd
+import pandas as pd 
 
 API_URL = "http://127.0.0.1:8009/search"
 SAMPLE_SIZE = 80
 TOP_K = 10
+
 
 DATASETS = {
     "quora": {"full": "beir/quora", "test": "beir/quora/test"},
